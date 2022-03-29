@@ -21,6 +21,7 @@ require (
 	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/kisielk/godepgraph v0.0.0-20190626013829-57a7e4a651a9 // indirect
+	github.com/mattn/go-sqlite3 v1.14.12 // indirect
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
 	golang.org/x/net v0.0.0-20220325170049-de3da57026de // indirect

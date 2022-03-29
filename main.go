@@ -1,25 +1,22 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"newssync/boot"
 	"newssync/src"
 	"time"
-
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	godotenv.Load()
-	log.Println("Environment variables have been loaded correctly...")
+	boot.LoadEnvironment()
+	boot.GenerateDatabases("databases", "source.db")
 
-	ticker := time.NewTicker(30 * time.Second)
+	ticker := time.NewTicker(5 * time.Second)
 	quit := make(chan struct{})
 	for {
 		select {
 		case <-ticker.C:
-			fmt.Println("Rerunning Source Checker")
+			log.Println("Rerunning Source Checker")
 			reCheckSources()
 		case <-quit:
 			ticker.Stop()
@@ -34,10 +31,10 @@ func reCheckSources() {
 	posts := retrieveCurrentPostData(sources)
 
 	for idx, post := range posts {
-		_, _, requiresUpdate := loadUpdatedSource(&sources[idx], &post)
+		_, alreadyExists := loadUpdatedSource(&sources[idx], &post)
 
-		if requiresUpdate {
-			go uploadPostToSources(sources[idx], sinks, &post)
+		if !alreadyExists {
+			uploadPostToSources(sources[idx], sinks, &post)
 			log.Println("Article has been posted!")
 			continue
 		}
@@ -61,9 +58,9 @@ func uploadPostToSources(s src.Source, sinks []src.Sink, p *src.Post) {
 	}
 }
 
-func loadUpdatedSource(s *src.Source, post *src.Post) (src.Post, string, bool) {
-	pastPost := (*s).GetPreviousUpload()
-	return *post, pastPost.LastArticleTitle, post.Title != pastPost.LastArticleTitle
+func loadUpdatedSource(s *src.Source, post *src.Post) (src.Post, bool) {
+	pastPost := (*s).CheckDuplicatePost(post)
+	return *post, pastPost
 }
 
 func retrieveCurrentPostData(sources []src.Source) []src.Post {

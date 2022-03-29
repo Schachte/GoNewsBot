@@ -1,19 +1,22 @@
 package impl
 
 import (
-	"encoding/json"
+	"database/sql"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"newssync/src"
-	"os"
+	"newssync/src/util"
 
 	"github.com/gocolly/colly"
+	_ "github.com/mattn/go-sqlite3"
 )
+
+const DEFAULT_PROTOCOL = "https://"
 
 type HackerNewsSource struct {
 	Url          string
 	Filemetadata string
+	DatabaseLoc  string
 }
 
 func (s *HackerNewsSource) Scrape() (src.Post, error) {
@@ -36,38 +39,34 @@ func (s *HackerNewsSource) Scrape() (src.Post, error) {
 		linksData = append(linksData, lm)
 	})
 
-	location := fmt.Sprintf("https://%s", src.HACKER_NEWS_URL)
+	location := fmt.Sprintf("%s%s", DEFAULT_PROTOCOL, src.HACKER_NEWS_URL)
 	c.Visit(location)
 	return linksData[0], nil
 }
 
-func (s *HackerNewsSource) GetPreviousUpload() src.History {
-	f, err := os.OpenFile(s.Filemetadata, os.O_APPEND|os.O_CREATE|os.O_RDWR, 777)
+func (s *HackerNewsSource) CheckDuplicatePost(p *src.Post) bool {
+	sqliteDatabase, err := sql.Open("sqlite3", s.DatabaseLoc)
+	defer sqliteDatabase.Close()
 
 	if err != nil {
 		log.Panic(err)
 	}
 
-	bytes, err := ioutil.ReadAll(f)
+	util.CreateTable(sqliteDatabase)
 
-	tmpUpload := src.History{}
-	unmarshalErr := json.Unmarshal(bytes, &tmpUpload)
-
-	if unmarshalErr != nil {
-		log.Panic(unmarshalErr)
-	}
-
-	return tmpUpload
+	return util.CheckIfPostHasBeenPosted(sqliteDatabase, p.Title)
 }
 
 func (s *HackerNewsSource) WriteUpload(h *src.History) {
-	f, _ := os.OpenFile(s.Filemetadata, os.O_TRUNC|os.O_RDWR|os.O_CREATE, 777)
-
-	historyJson, err := json.MarshalIndent(h, "", "  ")
+	sqliteDatabase, err := sql.Open("sqlite3", s.DatabaseLoc)
 
 	if err != nil {
 		log.Panic(err)
 	}
 
-	f.Write(historyJson)
+	writeErr := util.StoreNewPost(sqliteDatabase, h)
+
+	if writeErr != nil {
+		log.Panic(writeErr)
+	}
 }

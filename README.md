@@ -20,7 +20,7 @@ This bot is designed to support `polling` for updates from one or more `sources`
 
 In the above example, we would have a `source` implementation for `hackernews` that conforms to the [src/source.go](src/Source.go) interface. 
 
-> This implementation will support anything you want to do to obtain the source information via the `Scrape()` method invocation. The two other functions `GetPreviousUpload()` will check the database or file to see if it's been stored or process already and `WriteUpload()` will persist any new updates after the fanout process has completed.
+> This implementation will support anything you want to do to obtain the source information via the `Scrape()` method invocation. The two other functions `CheckDuplicatePost()` will check the database or file to see if it's been stored or process already and `WriteUpload()` will persist any new updates after the fanout process has completed.
 
 Once the `source` is implemented, we can implement `sinks` which specify _where_ we want to upload data as it comes in. You can write your `sink` to conform to the `Sink` interface underneath the src directory within the [/src/sink.go](/src/sink.go) interface.
 

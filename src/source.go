@@ -13,6 +13,6 @@ type History struct {
 
 type Source interface {
 	Scrape() (Post, error)
-	GetPreviousUpload() History
+	CheckDuplicatePost(*Post) bool
 	WriteUpload(*History)
 }

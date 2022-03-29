@@ -2,6 +2,7 @@ package impl
 
 import (
 	"fmt"
+	"log"
 	"newssync/src"
 	"os"
 
@@ -31,13 +32,9 @@ func (ts *TwitterSink) Upload(p *src.Post) (bool, error) {
 	_, _, err := client.Statuses.Update(tweetBody, nil)
 
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return false, err
 	}
 
 	return true, err
-}
-
-func (ts *TwitterSink) GetUri() string {
-	return ts.Uri
 }

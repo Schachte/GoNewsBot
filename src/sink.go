@@ -8,6 +8,5 @@ type Credentials struct {
 
 type Sink interface {
 	GetAuthentication() *Credentials
-	GetUri() string
 	Upload(p *Post) (bool, error)
 }
