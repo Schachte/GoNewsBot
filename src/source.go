@@ -9,6 +9,7 @@ type Post struct {
 type History struct {
 	LastUpdated      string `json:"LastUpdated"`
 	LastArticleTitle string `json:"LastArticleTitle"`
+	Source           string `json:"Source"`
 }
 
 type Source interface {

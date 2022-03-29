@@ -58,7 +58,7 @@ func CheckIfPostHasBeenPosted(db *sql.DB, postName string) bool {
 
 func StoreNewPost(db *sql.DB, h *src.History) error {
 	query := "INSERT INTO source (postTitle, postSource, postDate) VALUES ($1, $2, $3)"
-	_, err := db.Exec(query, h.LastArticleTitle, "hackernews", 5)
+	_, err := db.Exec(query, h.LastArticleTitle, h.Source, time.Now().Unix())
 	if err != nil {
 		log.Fatal(err)
 	}

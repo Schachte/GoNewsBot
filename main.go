@@ -10,8 +10,9 @@ import (
 func main() {
 	boot.LoadEnvironment()
 	boot.GenerateDatabases("databases", "source.db")
+	reCheckSources()
 
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(3 * time.Hour)
 	quit := make(chan struct{})
 	for {
 		select {
@@ -51,6 +52,7 @@ func uploadPostToSources(s src.Source, sinks []src.Sink, p *src.Post) {
 			newHistory := src.History{
 				LastUpdated:      time.Now().String(),
 				LastArticleTitle: p.Title,
+				Source:           p.SourceType,
 			}
 
 			s.WriteUpload(&newHistory)
