@@ -1,4 +1,4 @@
-package data
+package src
 
 type Credentials struct {
 	ClientId     string

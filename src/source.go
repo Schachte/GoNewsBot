@@ -1,4 +1,4 @@
-package data
+package src
 
 type Post struct {
 	Title      string

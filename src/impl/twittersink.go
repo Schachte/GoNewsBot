@@ -2,7 +2,7 @@ package impl
 
 import (
 	"fmt"
-	"newssync/data"
+	"newssync/src"
 	"os"
 
 	"github.com/dghubble/go-twitter/twitter"
@@ -11,14 +11,14 @@ import (
 
 type TwitterSink struct {
 	Uri  string
-	Auth data.Credentials
+	Auth src.Credentials
 }
 
-func (ts *TwitterSink) GetAuthentication() *data.Credentials {
+func (ts *TwitterSink) GetAuthentication() *src.Credentials {
 	return &ts.Auth
 }
 
-func (ts *TwitterSink) Upload(p *data.Post) (bool, error) {
+func (ts *TwitterSink) Upload(p *src.Post) (bool, error) {
 	config := oauth1.NewConfig(os.Getenv("CLIENT_ID"), os.Getenv("CLIENT_SECRET"))
 	token := oauth1.NewToken(os.Getenv("OAUTH_ID"), os.Getenv("OAUTH_SECRET"))
 

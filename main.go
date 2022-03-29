@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"newssync/boot"
-	"newssync/data"
+	"newssync/src"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -46,12 +46,12 @@ func reCheckSources() {
 
 }
 
-func uploadPostToSources(s data.Source, sinks []data.Sink, p *data.Post) {
+func uploadPostToSources(s src.Source, sinks []src.Sink, p *src.Post) {
 	for _, sink := range sinks {
 		uploaded, _ := sink.Upload(p)
 
 		if uploaded {
-			newHistory := data.History{
+			newHistory := src.History{
 				LastUpdated:      time.Now().String(),
 				LastArticleTitle: p.Title,
 			}
@@ -61,13 +61,13 @@ func uploadPostToSources(s data.Source, sinks []data.Sink, p *data.Post) {
 	}
 }
 
-func loadUpdatedSource(s data.Source, post *data.Post) (*data.Post, string, bool) {
+func loadUpdatedSource(s src.Source, post *src.Post) (*src.Post, string, bool) {
 	pastPost := s.GetPreviousUpload()
 	return post, pastPost.LastArticleTitle, post.Title != pastPost.LastArticleTitle
 }
 
-func retrieveCurrentPostData(sources []data.Source) []*data.Post {
-	var currentPosts []*data.Post
+func retrieveCurrentPostData(sources []src.Source) []*src.Post {
+	var currentPosts []*src.Post
 	for _, source := range sources {
 		res, err := source.Scrape()
 		if err != nil {

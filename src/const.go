@@ -1,4 +1,4 @@
-package data
+package src
 
 const (
 	HACKER_NEWS_SOURCE = "hackernews"
