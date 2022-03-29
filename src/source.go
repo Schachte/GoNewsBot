@@ -12,7 +12,7 @@ type History struct {
 }
 
 type Source interface {
-	Scrape() (*Post, error)
+	Scrape() (Post, error)
 	GetPreviousUpload() History
-	WriteUploadMetadata(*History)
+	WriteUpload(*History)
 }

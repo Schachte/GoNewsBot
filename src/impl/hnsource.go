@@ -16,7 +16,7 @@ type HackerNewsSource struct {
 	Filemetadata string
 }
 
-func (s *HackerNewsSource) Scrape() (*src.Post, error) {
+func (s *HackerNewsSource) Scrape() (src.Post, error) {
 	var linksData []src.Post
 
 	c := colly.NewCollector(
@@ -38,7 +38,7 @@ func (s *HackerNewsSource) Scrape() (*src.Post, error) {
 
 	location := fmt.Sprintf("https://%s", src.HACKER_NEWS_URL)
 	c.Visit(location)
-	return &linksData[0], nil
+	return linksData[0], nil
 }
 
 func (s *HackerNewsSource) GetPreviousUpload() src.History {
@@ -60,7 +60,7 @@ func (s *HackerNewsSource) GetPreviousUpload() src.History {
 	return tmpUpload
 }
 
-func (s *HackerNewsSource) WriteUploadMetadata(h *src.History) {
+func (s *HackerNewsSource) WriteUpload(h *src.History) {
 	f, _ := os.OpenFile(s.Filemetadata, os.O_TRUNC|os.O_RDWR|os.O_CREATE, 777)
 
 	historyJson, err := json.MarshalIndent(h, "", "  ")

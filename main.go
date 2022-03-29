@@ -34,14 +34,14 @@ func reCheckSources() {
 	posts := retrieveCurrentPostData(sources)
 
 	for idx, post := range posts {
-		_, _, requiresUpdate := loadUpdatedSource(sources[idx], post)
+		_, _, requiresUpdate := loadUpdatedSource(&sources[idx], &post)
 
 		if requiresUpdate {
-			go uploadPostToSources(sources[idx], sinks, post)
+			go uploadPostToSources(sources[idx], sinks, &post)
 			log.Println("Article has been posted!")
-		} else {
-			log.Println("No update is required, this article was already posted")
+			continue
 		}
+		log.Println("No update is required, this article was already posted")
 	}
 
 }
@@ -56,24 +56,28 @@ func uploadPostToSources(s src.Source, sinks []src.Sink, p *src.Post) {
 				LastArticleTitle: p.Title,
 			}
 
-			s.WriteUploadMetadata(&newHistory)
+			s.WriteUpload(&newHistory)
 		}
 	}
 }
 
-func loadUpdatedSource(s src.Source, post *src.Post) (*src.Post, string, bool) {
-	pastPost := s.GetPreviousUpload()
-	return post, pastPost.LastArticleTitle, post.Title != pastPost.LastArticleTitle
+func loadUpdatedSource(s *src.Source, post *src.Post) (src.Post, string, bool) {
+	pastPost := (*s).GetPreviousUpload()
+	return *post, pastPost.LastArticleTitle, post.Title != pastPost.LastArticleTitle
 }
 
-func retrieveCurrentPostData(sources []src.Source) []*src.Post {
-	var currentPosts []*src.Post
+func retrieveCurrentPostData(sources []src.Source) []src.Post {
+	var currentPosts []src.Post
+
 	for _, source := range sources {
 		res, err := source.Scrape()
+
 		if err != nil {
 			log.Panic(err)
 		}
+
 		currentPosts = append(currentPosts, res)
 	}
+
 	return currentPosts
 }
