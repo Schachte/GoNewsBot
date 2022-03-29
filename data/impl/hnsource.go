@@ -63,7 +63,7 @@ func (s *HackerNewsSource) GetPreviousUpload() data.History {
 func (s *HackerNewsSource) WriteUploadMetadata(h *data.History) {
 	f, _ := os.OpenFile(s.Filemetadata, os.O_TRUNC|os.O_RDWR|os.O_CREATE, 777)
 
-	historyJson, err := json.Marshal(h)
+	historyJson, err := json.MarshalIndent(h, "", "  ")
 
 	if err != nil {
 		log.Panic(err)

@@ -19,7 +19,7 @@ func (ts *TwitterSink) GetAuthentication() *data.Credentials {
 }
 
 func (ts *TwitterSink) Upload(p *data.Post) (bool, error) {
-	config := oauth1.NewConfig(os.Getenv("CLIENT_ID"), os.Getenv("CLEINT_SECRET"))
+	config := oauth1.NewConfig(os.Getenv("CLIENT_ID"), os.Getenv("CLIENT_SECRET"))
 	token := oauth1.NewToken(os.Getenv("OAUTH_ID"), os.Getenv("OAUTH_SECRET"))
 
 	httpClient := config.Client(oauth1.NoContext, token)
@@ -27,7 +27,7 @@ func (ts *TwitterSink) Upload(p *data.Post) (bool, error) {
 	// Twitter client
 	client := twitter.NewClient(httpClient)
 
-	tweetBody := fmt.Sprintf("Check out this article from %s! %s\n%s", p.SourceType, p.Link, p.Title)
+	tweetBody := fmt.Sprintf("[Ryan's Twitter Bot] - Check out this article from %s! %s\n%s", p.SourceType, p.Link, p.Title)
 	_, _, err := client.Statuses.Update(tweetBody, nil)
 
 	if err != nil {
