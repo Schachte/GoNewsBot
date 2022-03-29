@@ -12,7 +12,7 @@ func main() {
 	boot.GenerateDatabases("databases", "source.db")
 	reCheckSources()
 
-	ticker := time.NewTicker(3 * time.Hour)
+	ticker := time.NewTicker(2 * time.Hour)
 	quit := make(chan struct{})
 	for {
 		select {
